@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.catalog',
     # 'apps.orders',
-    # 'apps.repairs',
+    'apps.repairs',
 
     'rest_framework',
 ]
@@ -54,7 +54,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 12,
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
-    "DEFAULT_THROTTLE_RATES": {"auth": "10/min"},
+    "DEFAULT_THROTTLE_RATES": {"auth": "10/min", "repair_create": "20/hour"},
 }
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://localhost:3001"]
