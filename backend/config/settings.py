@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'apps.accounts',
+    'apps.accounts',
     'apps.catalog',
     # 'apps.orders',
     # 'apps.repairs',
@@ -48,10 +48,18 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+AUTH_USER_MODEL = "accounts.User"
+
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 12,
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    "DEFAULT_THROTTLE_RATES": {"auth": "10/min"},
 }
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://localhost:3001"]
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3001")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

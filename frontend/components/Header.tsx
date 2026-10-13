@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
 
 const NAV = [
   { href: "/catalog", label: "Каталог" },
@@ -12,6 +13,15 @@ const NAV = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuth();
+
+  const authLink = loading
+    ? null
+    : user
+      ? { href: "/account", label: "Профиль" }
+      : { href: "/auth/login", label: "Войти" };
+
+  const mobileItems = authLink ? [...NAV, authLink] : NAV;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -38,6 +48,15 @@ export default function Header() {
           ))}
         </nav>
 
+        {authLink && (
+          <Link
+            href={authLink.href}
+            className="hidden h-10 items-center rounded-lg border border-line px-4 text-sm hover:bg-raised md:flex"
+          >
+            {authLink.label}
+          </Link>
+        )}
+
         <button
           type="button"
           className="flex h-11 w-11 items-center justify-center rounded-lg border border-line md:hidden"
@@ -62,7 +81,7 @@ export default function Header() {
           aria-label="Мобильная навигация"
           className="border-t border-line bg-bg px-4 py-2 md:hidden"
         >
-          {NAV.map((item) => (
+          {mobileItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
