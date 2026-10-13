@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
+import Link from "next/link";
 
 const input =
   "mt-1 h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
@@ -75,6 +76,7 @@ export default function AccountPage() {
             <button type="button" onClick={resend} className="text-accent hover:underline">
               Отправить письмо ещё раз
             </button>
+            <Link href="/orders" className="mt-4 inline-block text-accent hover:underline">Мои заказы</Link>
           </div>
         )}
       </div>

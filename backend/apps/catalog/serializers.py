@@ -79,3 +79,17 @@ class ProductQuerySerializer(serializers.Serializer):
     price_max = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0, required=False)
     q = serializers.CharField(max_length=100, required=False)
     ordering = serializers.ChoiceField(choices=["price", "-price", "newest", "name"], required=False)
+
+class CartVariantSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source="product.name")
+    product_slug = serializers.CharField(source="product.slug")
+    cover = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductVariant
+        fields = ["id", "sku", "title", "condition", "price", "currency", "stock",
+                  "product_name", "product_slug", "cover"]
+
+    def get_cover(self, obj):
+        images = list(obj.product.images.all())
+        return images[0].image.url if images else None

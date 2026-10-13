@@ -5,9 +5,12 @@ from . import selectors
 from .models import Brand, Category
 from .serializers import (
     BrandSerializer, CategorySerializer, ProductDetailSerializer,
-    ProductListSerializer, ProductQuerySerializer,
+    ProductListSerializer, ProductQuerySerializer, ProductVariant,
+    CartVariantSerializer
 )
-
+import uuid
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 class ProductListView(ListAPIView):
     permission_classes = [AllowAny]
@@ -40,3 +43,19 @@ class BrandListView(ListAPIView):
     serializer_class = BrandSerializer
     queryset = Brand.objects.all()
     pagination_class = None
+
+class VariantLookupView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        raw = request.query_params.get("ids", "")
+        try:
+            ids = [uuid.UUID(part) for part in raw.split(",") if part][:50]
+        except ValueError:
+            return Response({"detail": "Некорректные идентификаторы."}, status=400)
+        qs = (
+            ProductVariant.objects.filter(pk__in=ids, is_active=True, product__is_active=True)
+            .select_related("product")
+            .prefetch_related("product__images")
+        )
+        return Response(CartVariantSerializer(qs, many=True).data)

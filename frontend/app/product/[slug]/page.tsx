@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApiError, getProduct } from "@/lib/api";
 import { CONDITIONS, formatPrice } from "@/lib/format";
+import AddToCart from "@/components/AddToCart";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -76,6 +77,7 @@ export default async function ProductPage({ params }: Props) {
                     {v.stock > 0 ? "В наличии" : "Нет в наличии"}
                   </span>
                 </p>
+                <AddToCart variantId={v.id} stock={v.stock} />
               </li>
             ))}
           </ul>

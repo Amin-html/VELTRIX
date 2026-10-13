@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { useCart } from "@/lib/cart";
 
 const NAV = [
   { href: "/catalog", label: "Каталог" },
@@ -14,11 +15,14 @@ const NAV = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
+  const { count } = useCart();
 
   const navItems =
     user && (user.role === "master" || user.role === "admin")
       ? [...NAV, { href: "/master", label: "Кабинет мастера" }]
       : NAV;
+
+  const cartLink = { href: "/cart", label: count > 0 ? `Корзина (${count})` : "Корзина" };
 
   const authLink = loading
     ? null
@@ -26,13 +30,16 @@ export default function Header() {
       ? { href: "/account", label: "Профиль" }
       : { href: "/auth/login", label: "Войти" };
 
-  const mobileItems = authLink ? [...navItems, authLink] : navItems;
+  const mobileItems = [...navItems, cartLink, ...(authLink ? [authLink] : [])];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  const pill =
+    "h-10 items-center rounded-lg border border-line px-4 text-sm hover:bg-raised";
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg/90 backdrop-blur">
@@ -53,14 +60,16 @@ export default function Header() {
           ))}
         </nav>
 
-        {authLink && (
-          <Link
-            href={authLink.href}
-            className="hidden h-10 items-center rounded-lg border border-line px-4 text-sm hover:bg-raised md:flex"
-          >
-            {authLink.label}
+        <div className="hidden gap-2 md:flex">
+          <Link href={cartLink.href} className={`flex ${pill}`}>
+            {cartLink.label}
           </Link>
-        )}
+          {authLink && (
+            <Link href={authLink.href} className={`flex ${pill}`}>
+              {authLink.label}
+            </Link>
+          )}
+        </div>
 
         <button
           type="button"
@@ -71,11 +80,7 @@ export default function Header() {
           onClick={() => setOpen((v) => !v)}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-            {open ? (
-              <path d="M4 4l12 12M16 4L4 16" />
-            ) : (
-              <path d="M3 6h14M3 10h14M3 14h14" />
-            )}
+            {open ? <path d="M4 4l12 12M16 4L4 16" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
         </button>
       </div>
