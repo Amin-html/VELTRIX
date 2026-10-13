@@ -15,13 +15,18 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
 
+  const navItems =
+    user && (user.role === "master" || user.role === "admin")
+      ? [...NAV, { href: "/master", label: "Кабинет мастера" }]
+      : NAV;
+
   const authLink = loading
     ? null
     : user
       ? { href: "/account", label: "Профиль" }
       : { href: "/auth/login", label: "Войти" };
 
-  const mobileItems = authLink ? [...NAV, authLink] : NAV;
+  const mobileItems = authLink ? [...navItems, authLink] : navItems;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
