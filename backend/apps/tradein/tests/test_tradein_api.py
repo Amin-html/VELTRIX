@@ -79,3 +79,12 @@ class TradeInApiTests(TestCase):
         r = self.respond(rid, "cancelled")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.data["status"], "cancelled")
+
+    def test_offer_hidden_until_sent(self):
+        rid = self.create().data["id"]
+        TradeInRequest.objects.filter(pk=rid).update(offer_amount=Decimal("20000"), offer_note="x")
+        r = client_for(self.user).get(f"{URL}{rid}/")
+        self.assertIsNone(r.data["offer_amount"])
+        TradeInRequest.objects.filter(pk=rid).update(status="offered")
+        r = client_for(self.user).get(f"{URL}{rid}/")
+        self.assertEqual(Decimal(r.data["offer_amount"]), Decimal("20000"))

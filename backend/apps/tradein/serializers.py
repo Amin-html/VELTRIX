@@ -20,6 +20,13 @@ class TradeInSerializer(serializers.ModelSerializer):
     def get_allowed_actions(self, obj):
         return services.available_actions(obj)
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.status == TradeInRequest.Status.SUBMITTED:
+            data["offer_amount"] = None
+            data["offer_note"] = ""
+        return data
+
 
 class TradeInCreateSerializer(serializers.Serializer):
     device = serializers.CharField(max_length=120)
