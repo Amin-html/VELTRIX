@@ -15,6 +15,7 @@ class Command(BaseCommand):
 
         phones, _ = Category.objects.get_or_create(slug="smartphones", defaults={"name": "Смартфоны"})
         laptops, _ = Category.objects.get_or_create(slug="laptops", defaults={"name": "Ноутбуки"})
+        parts, _ = Category.objects.get_or_create(slug="parts", defaults={"name": "Запчасти"})
         apple, _ = Brand.objects.get_or_create(slug="apple", defaults={"name": "Apple"})
         samsung, _ = Brand.objects.get_or_create(slug="samsung", defaults={"name": "Samsung"})
 
@@ -22,6 +23,10 @@ class Command(BaseCommand):
             ("iPhone 13", "iphone-13", apple, phones, [("IP13-128-G", "128 GB", "good", "42000", 3), ("IP13-128-N", "128 GB", "new", "62000", 0)]),
             ("Galaxy S23", "galaxy-s23", samsung, phones, [("S23-256-N", "256 GB", "new", "58000", 5)]),
             ("MacBook Air M1", "macbook-air-m1", apple, laptops, [("MBA-M1-8-G", "8/256", "like_new", "68000", 1)]),
+            ("Аккумулятор для iPhone 13", "battery-iphone-13", apple, parts,
+             [("PART-IP13-BAT", "оригинальный", "new", "3000", 10)]),
+            ("Дисплей для Galaxy S23", "display-galaxy-s23", samsung, parts,
+             [("PART-S23-DSP", "OLED", "new", "9000", 4)]),
         ]
         for name, slug, brand, cat, variants in items:
             product, _ = Product.objects.get_or_create(
