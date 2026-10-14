@@ -6,6 +6,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
+from .serializers import (
+    LoginSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer,
+    RegisterSerializer, UserSerializer,
+)
 
 from . import services
 from .models import User
@@ -110,4 +116,38 @@ class ResendVerificationView(ThrottledView):
     def post(self, request):
         if not request.user.email_verified:
             services.send_verification_email(request.user)
+        return Response({"detail": "ok"})
+
+class PasswordResetRequestView(ThrottledView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data["email"].strip().lower()
+        user = User.objects.filter(email=email, is_active=True).first()
+        if user:
+            services.send_password_reset_email(user)
+        # ответ одинаков для существующих и несуществующих адресов
+        return Response(
+            {"detail": "Если аккаунт с таким email существует, мы отправили письмо со ссылкой."}
+        )
+
+
+class PasswordResetConfirmView(ThrottledView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        user = services.get_user_for_reset(data["uid"], data["token"])
+        if user is None or not user.is_active:
+            return Response({"detail": "Ссылка недействительна или устарела."}, status=400)
+        try:
+            validate_password(data["password"], user)
+        except DjangoValidationError as exc:
+            return Response({"password": list(exc.messages)}, status=400)
+        user.set_password(data["password"])
+        user.save(update_fields=["password"])
         return Response({"detail": "ok"})

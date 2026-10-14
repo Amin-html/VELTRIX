@@ -66,6 +66,11 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             autoComplete={isRegister ? "new-password" : "current-password"}
             className={input}
           />
+          {!isRegister && (
+          <Link href="/auth/forgot" className="-mt-2 text-sm text-accent hover:underline">
+            Забыли пароль?
+          </Link>
+        )}
           {fieldError("password")}
         </label>
 
