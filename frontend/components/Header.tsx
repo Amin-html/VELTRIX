@@ -45,9 +45,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-lg font-bold tracking-[0.2em]">
-          <Logo priority />
-        </Link>
+        <Logo priority />
 
         <nav aria-label="Основная навигация" className="hidden gap-8 md:flex">
           {navItems.map((item) => (
