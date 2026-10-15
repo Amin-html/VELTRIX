@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
+import { Emblem } from "@/components/Logo";
 
 const input =
   "mt-1 h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
@@ -42,6 +43,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16 sm:px-6">
+      <Emblem variant="lg" className="mx-auto mb-6 h-16 w-auto" />
       <h1 className="text-3xl font-bold">{isRegister ? "Регистрация" : "Вход"}</h1>
 
       <form onSubmit={onSubmit} className="mt-8 grid gap-4" noValidate>

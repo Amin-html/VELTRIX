@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useCart } from "@/lib/cart";
+import Logo from "@/components/Logo";
 
 const NAV = [
   { href: "/catalog", label: "Каталог" },
@@ -45,7 +46,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-bg/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="text-lg font-bold tracking-[0.2em]">
-          VELTRIX
+          <Logo priority />
         </Link>
 
         <nav aria-label="Основная навигация" className="hidden gap-8 md:flex">

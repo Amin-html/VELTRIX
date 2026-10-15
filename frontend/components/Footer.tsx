@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function Footer() {
   return (
     <footer className="border-t border-line bg-bg-2">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="font-bold tracking-[0.2em]">VELTRIX</p>
+          <Logo emblemClassName="h-6 w-auto" textClassName="text-base" />
           <p className="mt-1 text-sm text-muted">Технологии в твоих руках</p>
         </div>
         <nav aria-label="Футер" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">

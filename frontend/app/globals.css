@@ -26,3 +26,27 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+.veltrix-emblem {
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(0, 174, 255, 0.35));
+  transition: filter 220ms ease, transform 220ms ease;
+}
+
+.veltrix-logo-link:hover .veltrix-emblem,
+.veltrix-logo-link:focus-visible .veltrix-emblem {
+  filter: drop-shadow(0 0 7px rgba(0, 174, 255, 0.6))
+    drop-shadow(0 0 16px rgba(0, 100, 255, 0.3));
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veltrix-emblem {
+    transition: none;
+  }
+  .veltrix-logo-link:hover .veltrix-emblem,
+  .veltrix-logo-link:focus-visible .veltrix-emblem {
+    transform: none;
+  }
+}
