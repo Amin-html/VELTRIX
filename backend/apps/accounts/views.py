@@ -15,6 +15,7 @@ from .serializers import (
 )
 from . import services
 from .models import User, Address
+from rest_framework.exceptions import ValidationError
 
 BACKEND = "django.contrib.auth.backends.ModelBackend"
 

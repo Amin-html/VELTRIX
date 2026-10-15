@@ -15,6 +15,8 @@ MAX_QTY = 10
 
 def create_order(*, user, items, key, full_name, phone, address, comment="", delivery_method="delivery"):
     """Возвращает (order, created). Повтор с тем же ключом отдаёт прежний заказ."""
+    if not user.email_verified:
+        raise PermissionDenied("Подтвердите email в профиле, чтобы оформить заказ.")
     if delivery_method == Order.DeliveryMethod.DELIVERY and not address.strip():
         raise ValidationError({"address": "Укажите адрес доставки."})
 
