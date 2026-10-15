@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ApiError, getProduct } from "@/lib/api";
 import { CONDITIONS, formatPrice } from "@/lib/format";
 import AddToCart from "@/components/AddToCart";
+import FavoriteButton from "@/components/FavoriteButton";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -58,7 +59,10 @@ export default async function ProductPage({ params }: Props) {
 
         <div>
           <p className="text-sm uppercase tracking-wider text-muted">{product.brand.name}</p>
-          <h1 className="mt-1 text-3xl font-bold">{product.name}</h1>
+          <div className="mt-1 flex items-start justify-between gap-4">
+            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <FavoriteButton slug={product.slug} />
+          </div>
           {product.description && <p className="mt-4 text-muted">{product.description}</p>}
 
           <h2 className="mt-8 text-lg font-semibold">Варианты</h2>

@@ -89,7 +89,15 @@ export default function OrderDetailPage() {
       <dl className="mt-6 divide-y divide-line rounded-xl border border-line text-sm">
         <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Получатель</dt><dd>{order.full_name}</dd></div>
         <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Телефон</dt><dd>{order.phone}</dd></div>
-        <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Адрес</dt><dd className="text-right">{order.address}</dd></div>
+        
+        {/* Обновленный блок получения и адреса */}
+        <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Получение</dt><dd>{order.delivery_display}</dd></div>
+        {order.delivery_method === "delivery" ? (
+          <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Адрес</dt><dd className="text-right">{order.address}</dd></div>
+        ) : (
+          <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Пункт самовывоза</dt><dd className="text-right">{order.pickup_point || "Адрес сообщим при подтверждении заказа"}</dd></div>
+        )}
+        
         <div className="flex justify-between gap-4 px-4 py-3"><dt className="text-muted">Оплата</dt><dd>{order.payment_method}</dd></div>
       </dl>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
+import { useAddresses } from "@/components/useAddresses";
 import { useCartDetails } from "@/components/useCartDetails";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
 import { useCart } from "@/lib/cart";
@@ -14,12 +15,20 @@ import type { Order } from "@/lib/orders";
 const input =
   "mt-1 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
 
+const METHODS = [
+  ["delivery", "Доставка"],
+  ["pickup", "Самовывоз"],
+] as const;
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const { lines, ready, clear } = useCart();
   const { variants, state } = useCartDetails(lines, ready);
+  const { items: saved } = useAddresses(!!user);
   const [idemKey] = useState(() => crypto.randomUUID());
+  const [method, setMethod] = useState<"delivery" | "pickup">("delivery");
+  const [address, setAddress] = useState("");
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [pending, setPending] = useState(false);
 
@@ -55,7 +64,13 @@ export default function CheckoutPage() {
     try {
       const res = await apiFetch("/orders/", {
         method: "POST",
-        body: JSON.stringify({ ...fields, items: lines, idempotency_key: idemKey }),
+        body: JSON.stringify({
+          ...fields,
+          delivery_method: method,
+          address: method === "delivery" ? address : "",
+          items: lines,
+          idempotency_key: idemKey,
+        }),
       });
       if (res.ok) {
         const order = (await res.json()) as Order;
@@ -97,11 +112,59 @@ export default function CheckoutPage() {
           <input name="phone" type="tel" required defaultValue={user.phone} autoComplete="tel" className={`${input} h-11`} />
           {fieldError("phone")}
         </label>
-        <label className="text-sm text-muted">
-          Адрес доставки
-          <input name="address" required maxLength={300} autoComplete="street-address" className={`${input} h-11`} />
-          {fieldError("address")}
-        </label>
+
+        <fieldset className="grid gap-2">
+          <legend className="text-sm text-muted">Способ получения</legend>
+          {METHODS.map(([value, label]) => (
+            <label key={value} className="flex items-center gap-3 rounded-lg border border-line bg-surface px-3 py-3 text-sm">
+              <input
+                type="radio"
+                name="delivery_method"
+                value={value}
+                checked={method === value}
+                onChange={() => setMethod(value)}
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+
+        {method === "delivery" ? (
+          <>
+            {saved.length > 0 && (
+              <label className="text-sm text-muted">
+                Сохранённые адреса
+                <select
+                  defaultValue=""
+                  onChange={(e) => e.target.value && setAddress(e.target.value)}
+                  className={`${input} h-11`}
+                >
+                  <option value="">Выбрать…</option>
+                  {saved.map((a) => (
+                    <option key={a.id} value={a.address}>{a.label}: {a.address}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+            <label className="text-sm text-muted">
+              Адрес доставки
+              <input
+                name="address"
+                required
+                maxLength={300}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                autoComplete="street-address"
+                className={`${input} h-11`}
+              />
+              {fieldError("address")}
+            </label>
+            <p className="text-xs text-muted">Условия и сроки доставки согласуем при подтверждении заказа.</p>
+          </>
+        ) : (
+          <p className="text-sm text-muted">Адрес пункта самовывоза сообщим при подтверждении заказа.</p>
+        )}
+
         <label className="text-sm text-muted">
           Комментарий (необязательно)
           <textarea name="comment" maxLength={500} rows={3} className={`${input} py-2`} />

@@ -36,8 +36,8 @@ def cancel(modeladmin, request, queryset):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("short_id", "user", "status", "total", "created_at")
-    list_filter = ("status",)
+    list_display = ("short_id", "user", "status", "delivery_method", "total", "created_at")
+    list_filter = ("status", "delivery_method")
     search_fields = ("user__email", "phone", "full_name")
     readonly_fields = [f.name for f in Order._meta.fields]
     inlines = [ItemInline]

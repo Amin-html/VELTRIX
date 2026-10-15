@@ -12,4 +12,6 @@ urlpatterns = [
     path("resend-verification/", views.ResendVerificationView.as_view()),
     path("password-reset/", views.PasswordResetRequestView.as_view()),
     path("password-reset/confirm/", views.PasswordResetConfirmView.as_view()),
+    path("addresses/", views.AddressListCreateView.as_view()),
+    path("addresses/<int:pk>/", views.AddressDetailView.as_view()),
 ]

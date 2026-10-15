@@ -1,6 +1,6 @@
 from django.db.models import Exists, Min, OuterRef, Prefetch, Q, Sum
 
-from .models import Product, ProductVariant
+from .models import Product, ProductVariant, Favorite
 
 ORDERING = {"price": "min_price", "-price": "-min_price", "newest": "-created_at", "name": "name"}
 
@@ -59,3 +59,7 @@ def product_detail_queryset():
             ),
         )
     )
+
+def favorite_products(user):
+    ids = Favorite.objects.filter(user=user).values("product_id")
+    return product_list(params={}).filter(pk__in=ids)

@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
 import Link from "next/link";
+import AddressBook from "@/components/AddressBook";
 
 const input =
   "mt-1 h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
@@ -98,6 +99,11 @@ export default function AccountPage() {
           {pending ? "Сохраняем…" : "Сохранить"}
         </Button>
       </form>
+
+      {/* Книга адресов перед выходом */}
+      <div className="mt-8">
+        <AddressBook />
+      </div>
 
       <Button variant="secondary" onClick={onLogout} className="mt-8">
         Выйти

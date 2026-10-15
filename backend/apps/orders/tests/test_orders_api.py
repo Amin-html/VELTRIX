@@ -131,3 +131,17 @@ class OrderApiTests(TestCase):
     def test_variant_lookup_bad_ids(self):
         r = client_for().get("/api/v1/catalog/variants/", {"ids": "not-a-uuid"})
         self.assertEqual(r.status_code, 400)
+
+    def test_pickup_does_not_require_address(self):
+        r = self.order(address="", delivery_method="pickup")
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(r.data["delivery_method"], "pickup")
+        self.assertEqual(r.data["address"], "")
+
+    def test_delivery_requires_address(self):
+        r = self.order(address="", delivery_method="delivery")
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(self.stock(), 3)
+
+    def test_invalid_delivery_method_rejected(self):
+        self.assertEqual(self.order(delivery_method="drone").status_code, 400)

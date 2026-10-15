@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core import signing
+from rest_framework import generics
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,12 +11,10 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .serializers import (
     LoginSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer,
-    RegisterSerializer, UserSerializer,
+    RegisterSerializer, UserSerializer, AddressSerializer
 )
-
 from . import services
-from .models import User
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .models import User, Address
 
 BACKEND = "django.contrib.auth.backends.ModelBackend"
 
@@ -151,3 +150,27 @@ class PasswordResetConfirmView(ThrottledView):
         user.set_password(data["password"])
         user.save(update_fields=["password"])
         return Response({"detail": "ok"})
+
+MAX_ADDRESSES = 10
+
+
+class AddressListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddressSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        if self.get_queryset().count() >= MAX_ADDRESSES:
+            raise ValidationError({"detail": f"Можно сохранить не больше {MAX_ADDRESSES} адресов."})
+        serializer.save(user=self.request.user)
+
+
+class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddressSerializer
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)

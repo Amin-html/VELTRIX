@@ -21,6 +21,9 @@ export type Order = {
   created_at: string;
   items: OrderItem[];
   can_cancel: boolean;
+  delivery_method: string;
+  delivery_display: string;
+  pickup_point: string;
 };
 
 export const shortId = (id: string) => id.slice(0, 8).toUpperCase();

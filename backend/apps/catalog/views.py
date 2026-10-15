@@ -1,16 +1,21 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.permissions import AllowAny
-
-from . import selectors
-from .models import Brand, Category
-from .serializers import (
-    BrandSerializer, CategorySerializer, ProductDetailSerializer,
-    ProductListSerializer, ProductQuerySerializer, ProductVariant,
-    CartVariantSerializer
-)
 import uuid
+
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from . import selectors
+from .models import Brand, Category, Favorite, Product, ProductVariant
+from .serializers import (
+    BrandSerializer,
+    CartVariantSerializer,
+    CategorySerializer,
+    ProductDetailSerializer,
+    ProductListSerializer,
+    ProductQuerySerializer,
+)
 
 class ProductListView(ListAPIView):
     permission_classes = [AllowAny]
@@ -59,3 +64,35 @@ class VariantLookupView(APIView):
             .prefetch_related("product__images")
         )
         return Response(CartVariantSerializer(qs, many=True).data)
+
+
+MAX_FAVORITES = 200
+
+
+class FavoriteListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        qs = selectors.favorite_products(request.user)[:100]
+        return Response(ProductListSerializer(qs, many=True, context={"request": request}).data)
+
+    def post(self, request):
+        slug = request.data.get("slug")
+        if not isinstance(slug, str) or not slug:
+            return Response({"detail": "Укажите товар."}, status=400)
+        product = get_object_or_404(Product, slug=slug, is_active=True)
+        if (
+            not Favorite.objects.filter(user=request.user, product=product).exists()
+            and Favorite.objects.filter(user=request.user).count() >= MAX_FAVORITES
+        ):
+            return Response({"detail": "Слишком много товаров в избранном."}, status=400)
+        _, created = Favorite.objects.get_or_create(user=request.user, product=product)
+        return Response({"slug": slug}, status=201 if created else 200)
+
+
+class FavoriteDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, slug):
+        Favorite.objects.filter(user=request.user, product__slug=slug).delete()
+        return Response(status=204)

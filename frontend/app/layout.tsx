@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
+import { FavoritesProvider } from "@/components/FavoritesProvider";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -24,11 +25,13 @@ export default function RootLayout({
   return (
     <html lang="ru" className={inter.variable}>
       <body className="flex min-h-screen flex-col antialiased">
-        <AuthProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </AuthProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </FavoritesProvider>
+          </AuthProvider>
       </body>
     </html>
   );

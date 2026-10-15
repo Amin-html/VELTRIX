@@ -14,12 +14,20 @@ class Order(models.Model):
         COMPLETED = "completed", "Выполнен"
         CANCELLED = "cancelled", "Отменён"
 
+
+    class DeliveryMethod(models.TextChoices):
+        DELIVERY = "delivery", "Доставка"
+        PICKUP = "pickup", "Самовывоз"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="orders")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.NEW)
     full_name = models.CharField(max_length=120)
     phone = models.CharField(max_length=32)
-    address = models.CharField(max_length=300)
+    delivery_method = models.CharField(
+        max_length=10, choices=DeliveryMethod.choices, default=DeliveryMethod.DELIVERY
+    )
+    address = models.CharField(max_length=300, blank=True)
     comment = models.CharField(max_length=500, blank=True)
     total = models.DecimalField(max_digits=12, decimal_places=2)
     currency = models.CharField(max_length=3, default="KGS")

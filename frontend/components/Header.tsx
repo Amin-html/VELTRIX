@@ -18,6 +18,7 @@ export default function Header() {
   const { user, loading } = useAuth();
   const { count } = useCart();
 
+  // 1. Сначала объявляем базовые элементы меню
   const navItems =
     user && (user.role === "master" || user.role === "admin")
       ? [...NAV, { href: "/master", label: "Кабинет мастера" }]
@@ -31,7 +32,13 @@ export default function Header() {
       ? { href: "/account", label: "Профиль" }
       : { href: "/auth/login", label: "Войти" };
 
-  const mobileItems = [...navItems, cartLink, ...(authLink ? [authLink] : [])];
+  // 2. Теперь собираем итоговый массив для мобильного меню с "Избранным"
+  const mobileItems = [
+    ...navItems,
+    { href: "/favorites", label: "Избранное" },
+    cartLink,
+    ...(authLink ? [authLink] : []),
+  ];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -60,6 +67,15 @@ export default function Header() {
         </nav>
 
         <div className="hidden gap-2 md:flex">
+          <Link
+            href="/favorites"
+            aria-label="Избранное"
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-line hover:bg-raised"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </Link>
           <Link href={cartLink.href} className={`flex ${pill}`}>
             {cartLink.label}
           </Link>

@@ -13,10 +13,10 @@ MAX_LINES = 20
 MAX_QTY = 10
 
 
-def create_order(*, user, items, key, full_name, phone, address, comment=""):
+def create_order(*, user, items, key, full_name, phone, address, comment="", delivery_method="delivery"):
     """Возвращает (order, created). Повтор с тем же ключом отдаёт прежний заказ."""
-    if not user.email_verified:
-        raise PermissionDenied("Подтвердите email в профиле, чтобы оформить заказ.")
+    if delivery_method == Order.DeliveryMethod.DELIVERY and not address.strip():
+        raise ValidationError({"address": "Укажите адрес доставки."})
 
     existing = Order.objects.filter(user=user, idempotency_key=key).first()
     if existing:
@@ -58,8 +58,10 @@ def create_order(*, user, items, key, full_name, phone, address, comment=""):
 
             total = sum((variants[pk].price * qty for pk, qty in wanted.items()), Decimal("0"))
             order = Order.objects.create(
-                user=user, full_name=full_name, phone=phone, address=address, comment=comment,
+                user=user, full_name=full_name, phone=phone, comment=comment,
                 total=total, currency=currencies.pop(), idempotency_key=key,
+                delivery_method=delivery_method,
+                address=address if delivery_method == Order.DeliveryMethod.DELIVERY else "",
             )
             for pk, qty in wanted.items():
                 variant = variants[pk]

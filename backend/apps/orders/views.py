@@ -33,6 +33,7 @@ class OrderListCreateView(APIView):
             phone=data["phone"],
             address=data["address"],
             comment=data["comment"],
+            delivery_method=data["delivery_method"],
         )
         order = selectors.user_orders(request.user).get(pk=order.pk)
         return Response(OrderSerializer(order).data, status=201 if created else 200)
