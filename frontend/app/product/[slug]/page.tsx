@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApiError, getProduct } from "@/lib/api";
-import { CONDITIONS, formatPrice } from "@/lib/format";
 import AddToCart from "@/components/AddToCart";
 import FavoriteButton from "@/components/FavoriteButton";
+import { ApiError, getProduct } from "@/lib/api";
+import { CONDITIONS, formatPrice } from "@/lib/format";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const abs = (u: string) => new URL(u, SITE).toString();
+
 const CONDITION_SCHEMA: Record<string, string> = {
   new: "https://schema.org/NewCondition",
   like_new: "https://schema.org/UsedCondition",
@@ -35,7 +36,12 @@ export async function generateMetadata({ params }: Props) {
     title: `${p.name} — VELTRIX`,
     description,
     alternates: { canonical: `/product/${p.slug}` },
-    openGraph: { title: p.name, description, type: "website", images: image ? [image] : undefined },
+    openGraph: {
+      title: p.name,
+      description,
+      type: "website",
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -43,13 +49,13 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await load(slug);
 
-    const jsonLd = {
+  const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description || undefined,
     brand: { "@type": "Brand", name: product.brand.name },
-    image: product.images.map((i) => abs(i.url)),
+    image: product.images.length ? product.images.map((i) => abs(i.url)) : undefined,
     offers: product.variants.map((v) => ({
       "@type": "Offer",
       url: abs(`/product/${product.slug}`),
@@ -62,10 +68,11 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-            <script
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
+
       <nav aria-label="Хлебные крошки" className="mb-6 text-sm text-muted">
         <Link href="/catalog" className="hover:text-fg">Каталог</Link>
         <span className="mx-2">/</span>
