@@ -16,8 +16,12 @@ export default function Footer() {
           <Link href="/trade-in" className="hover:text-fg">Выкуп</Link>
         </nav>
       </div>
-      <div className="border-t border-line py-4 text-center text-xs text-muted">
-        © {new Date().getFullYear()} VELTRIX
+           <div className="border-t border-line py-4 text-center text-xs text-muted">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+          <Link href="/privacy" className="hover:text-fg">Конфиденциальность</Link>
+          <Link href="/terms" className="hover:text-fg">Условия</Link>
+        </div>
+        <p className="mt-2">© {new Date().getFullYear()} VELTRIX</p>
       </div>
     </footer>
   );
