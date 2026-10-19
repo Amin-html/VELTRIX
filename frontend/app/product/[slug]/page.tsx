@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCart from "@/components/AddToCart";
 import FavoriteButton from "@/components/FavoriteButton";
+import ProductGallery from "@/components/ProductGallery";
 import { ApiError, getProduct } from "@/lib/api";
 import { CONDITIONS, formatPrice } from "@/lib/format";
 
@@ -80,26 +80,7 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <div className="grid gap-10 md:grid-cols-2">
-        <div className="grid gap-3">
-          {product.images.length === 0 ? (
-            <div className="flex aspect-square items-center justify-center rounded-2xl border border-line bg-surface text-muted">
-              Нет фото
-            </div>
-          ) : (
-            product.images.map((img, i) => (
-              <div key={img.url} className="relative aspect-square rounded-2xl border border-line bg-surface">
-                <Image
-                  src={img.url}
-                  alt={img.alt || product.name}
-                  fill
-                  unoptimized
-                  priority={i === 0}
-                  className="object-contain p-6"
-                />
-              </div>
-            ))
-          )}
-        </div>
+        <ProductGallery images={product.images} name={product.name} />
 
         <div>
           <p className="text-sm uppercase tracking-wider text-muted">{product.brand.name}</p>
