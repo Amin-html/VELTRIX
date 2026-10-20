@@ -1,0 +1,143 @@
+{
+  "categories": [
+    { "slug": "smartphones", "name": "Смартфоны" },
+    { "slug": "tablets", "name": "Планшеты" },
+    { "slug": "laptops", "name": "Ноутбуки" },
+    { "slug": "accessories", "name": "Аксессуары" },
+    { "slug": "parts", "name": "Запчасти" }
+  ],
+  "brands": [
+    { "slug": "apple", "name": "Apple" },
+    { "slug": "samsung", "name": "Samsung" },
+    { "slug": "xiaomi", "name": "Xiaomi" }
+  ],
+  "attributes": [
+    { "slug": "screen", "name": "Диагональ экрана" },
+    { "slug": "chip", "name": "Процессор" }
+  ],
+  "products": [
+    {
+      "slug": "iphone-13", "name": "iPhone 13", "brand": "apple", "category": "smartphones",
+      "description": "Смартфон Apple iPhone 13.",
+      "attributes": { "screen": "6,1\"", "chip": "Apple A15 Bionic" },
+      "variants": [
+        { "sku": "IP13-128-G", "title": "128 GB", "condition": "good", "price": "42000", "stock": 3, "warranty_months": 3 },
+        { "sku": "IP13-128-N", "title": "128 GB", "condition": "new", "price": "62000", "stock": 0, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "iphone-14", "name": "iPhone 14", "brand": "apple", "category": "smartphones",
+      "description": "Смартфон Apple iPhone 14.",
+      "attributes": { "screen": "6,1\"", "chip": "Apple A15 Bionic" },
+      "variants": [
+        { "sku": "IP14-128-G", "title": "128 GB", "condition": "good", "price": "52000", "stock": 2, "warranty_months": 3 },
+        { "sku": "IP14-256-LN", "title": "256 GB", "condition": "like_new", "price": "62000", "stock": 1, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "iphone-15", "name": "iPhone 15", "brand": "apple", "category": "smartphones",
+      "description": "Смартфон Apple iPhone 15.",
+      "attributes": { "screen": "6,1\"", "chip": "Apple A16 Bionic" },
+      "variants": [
+        { "sku": "IP15-128-N", "title": "128 GB", "condition": "new", "price": "78000", "stock": 4, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "galaxy-s23", "name": "Galaxy S23", "brand": "samsung", "category": "smartphones",
+      "description": "Смартфон Samsung Galaxy S23.",
+      "attributes": { "screen": "6,1\"", "chip": "Qualcomm Snapdragon 8 Gen 2" },
+      "variants": [
+        { "sku": "S23-256-N", "title": "256 GB", "condition": "new", "price": "58000", "stock": 5, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "galaxy-a54", "name": "Galaxy A54", "brand": "samsung", "category": "smartphones",
+      "description": "Смартфон Samsung Galaxy A54.",
+      "attributes": { "screen": "6,4\"", "chip": "Samsung Exynos 1380" },
+      "variants": [
+        { "sku": "A54-128-N", "title": "128 GB", "condition": "new", "price": "28000", "stock": 6, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "redmi-note-12", "name": "Redmi Note 12", "brand": "xiaomi", "category": "smartphones",
+      "description": "Смартфон Xiaomi Redmi Note 12.",
+      "variants": [
+        { "sku": "RN12-128-N", "title": "128 GB", "condition": "new", "price": "17000", "stock": 8, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "ipad-9", "name": "iPad (9-го поколения)", "brand": "apple", "category": "tablets",
+      "description": "Планшет Apple iPad 9-го поколения.",
+      "attributes": { "screen": "10,2\"", "chip": "Apple A13 Bionic" },
+      "variants": [
+        { "sku": "IPAD9-64-G", "title": "64 GB, Wi-Fi", "condition": "good", "price": "24000", "stock": 2, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "galaxy-tab-a9", "name": "Galaxy Tab A9", "brand": "samsung", "category": "tablets",
+      "description": "Планшет Samsung Galaxy Tab A9.",
+      "attributes": { "screen": "8,7\"" },
+      "variants": [
+        { "sku": "TABA9-64-N", "title": "64 GB", "condition": "new", "price": "16000", "stock": 5, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "macbook-air-m1", "name": "MacBook Air M1", "brand": "apple", "category": "laptops",
+      "description": "Ноутбук Apple MacBook Air на чипе M1.",
+      "attributes": { "screen": "13,3\"", "chip": "Apple M1" },
+      "variants": [
+        { "sku": "MBA-M1-8-G", "title": "8/256", "condition": "like_new", "price": "68000", "stock": 1, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "macbook-air-m2", "name": "MacBook Air M2", "brand": "apple", "category": "laptops",
+      "description": "Ноутбук Apple MacBook Air на чипе M2.",
+      "attributes": { "screen": "13,6\"", "chip": "Apple M2" },
+      "variants": [
+        { "sku": "MBA-M2-8-N", "title": "8/256", "condition": "new", "price": "95000", "stock": 2, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "airpods-pro-2", "name": "AirPods Pro (2-го поколения)", "brand": "apple", "category": "accessories",
+      "description": "Беспроводные наушники Apple AirPods Pro 2-го поколения.",
+      "variants": [
+        { "sku": "ACC-APP2-N", "title": "", "condition": "new", "price": "18000", "stock": 10, "warranty_months": 12 }
+      ]
+    },
+    {
+      "slug": "apple-20w-adapter", "name": "Адаптер питания Apple 20 Вт", "brand": "apple", "category": "accessories",
+      "description": "Сетевой адаптер питания USB-C мощностью 20 Вт.",
+      "variants": [
+        { "sku": "ACC-AP20W-N", "title": "", "condition": "new", "price": "1500", "stock": 20, "warranty_months": 6 }
+      ]
+    },
+    {
+      "slug": "usb-c-lightning-cable", "name": "Кабель USB-C — Lightning, 1 м", "brand": "apple", "category": "accessories",
+      "description": "Кабель для зарядки и синхронизации.",
+      "variants": [
+        { "sku": "ACC-CBL-CL1", "title": "1 м", "condition": "new", "price": "1200", "stock": 25, "warranty_months": 6 }
+      ]
+    },
+    {
+      "slug": "battery-iphone-13", "name": "Аккумулятор для iPhone 13", "brand": "apple", "category": "parts",
+      "description": "Аккумулятор для замены в iPhone 13.",
+      "variants": [
+        { "sku": "PART-IP13-BAT", "title": "оригинальный", "condition": "new", "price": "3000", "stock": 10, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "battery-iphone-14", "name": "Аккумулятор для iPhone 14", "brand": "apple", "category": "parts",
+      "description": "Аккумулятор для замены в iPhone 14.",
+      "variants": [
+        { "sku": "PART-IP14-BAT", "title": "оригинальный", "condition": "new", "price": "3200", "stock": 8, "warranty_months": 3 }
+      ]
+    },
+    {
+      "slug": "display-galaxy-s23", "name": "Дисплей для Galaxy S23", "brand": "samsung", "category": "parts",
+      "description": "Дисплей в сборе для замены в Samsung Galaxy S23.",
+      "variants": [
+        { "sku": "PART-S23-DSP", "title": "OLED", "condition": "new", "price": "9000", "stock": 4, "warranty_months": 3 }
+      ]
+    }
+  ]
+}
