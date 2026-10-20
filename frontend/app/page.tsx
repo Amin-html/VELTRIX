@@ -1,45 +1,38 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
+import { getI18n } from "@/lib/i18n/server";
 
-const ENTRIES = [
-  { href: "/catalog", title: "Каталог техники", text: "Смартфоны, планшеты, ноутбуки и аксессуары." },
-  { href: "/repair", title: "Ремонт", text: "Оставьте заявку и следите за статусом онлайн." },
-  { href: "/parts", title: "Запчасти", text: "Подбор деталей по модели устройства." },
-  { href: "/trade-in", title: "Выкуп", text: "Оценка вашего устройства после проверки." },
-];
+export default async function Home() {
+  const { m } = await getI18n();
+  const entries = [
+    { href: "/catalog", ...m.home.entries.catalog },
+    { href: "/repair", ...m.home.entries.repair },
+    { href: "/parts", ...m.home.entries.parts },
+    { href: "/trade-in", ...m.home.entries.tradeIn },
+  ];
+  const benefits = [m.home.benefits.quote, m.home.benefits.status, m.home.benefits.terms];
 
-const BENEFITS = [
-  { title: "Смета до начала работ", text: "Стоимость ремонта вы согласовываете заранее." },
-  { title: "Статус заявки онлайн", text: "История этапов ремонта всегда под рукой." },
-  { title: "Понятные условия", text: "Доставка, возврат и гарантия описаны на сайте." },
-];
-
-export default function Home() {
   return (
     <>
       <section className="bg-[radial-gradient(60%_50%_at_75%_0%,rgba(0,207,255,0.12),transparent)]">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-32">
           <p className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-accent">
-            Tech / Repair / Market
+            {m.home.eyebrow}
           </p>
           <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl">
-            Технологии в твоих руках
+            {m.home.title}
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted">
-            Покупка техники, ремонт и запчасти в одном месте.
-          </p>
+          <p className="mt-6 max-w-xl text-lg text-muted">{m.home.subtitle}</p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/catalog">Каталог техники</ButtonLink>
-            <ButtonLink href="/repair" variant="secondary">
-              Записаться на ремонт
-            </ButtonLink>
+            <ButtonLink href="/catalog">{m.home.ctaCatalog}</ButtonLink>
+            <ButtonLink href="/repair" variant="secondary">{m.home.ctaRepair}</ButtonLink>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {ENTRIES.map((e) => (
+          {entries.map((e) => (
             <Link
               key={e.href}
               href={e.href}
@@ -54,7 +47,7 @@ export default function Home() {
 
       <section className="border-t border-line bg-bg-2">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-3">
-          {BENEFITS.map((b) => (
+          {benefits.map((b) => (
             <div key={b.title}>
               <h3 className="font-semibold">{b.title}</h3>
               <p className="mt-2 text-sm text-muted">{b.text}</p>

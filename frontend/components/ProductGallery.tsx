@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 type Img = { url: string; alt: string };
 
@@ -9,13 +10,14 @@ const arrow =
   "absolute top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-bg/70 backdrop-blur transition-colors hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30";
 
 export default function ProductGallery({ images, name }: { images: Img[]; name: string }) {
+  const { m } = useI18n();
   const track = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
   if (images.length === 0) {
     return (
       <div className="flex aspect-square items-center justify-center rounded-2xl border border-line bg-surface text-muted">
-        Нет фото
+        {m.common.noPhoto}
       </div>
     );
   }
@@ -56,14 +58,14 @@ export default function ProductGallery({ images, name }: { images: Img[]; name: 
           tabIndex={0}
           role="group"
           aria-roledescription="carousel"
-          aria-label={`Фото: ${name}`}
+          aria-label={m.gallery.label(name)}
           className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-2xl border border-line bg-surface [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-accent [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, i) => (
             <div key={img.url} className="relative aspect-square w-full shrink-0 snap-center">
               <Image
                 src={img.url}
-                alt={img.alt || (last > 0 ? `${name}, фото ${i + 1}` : name)}
+                alt={img.alt || (last > 0 ? m.gallery.photoN(name, i + 1) : name)}
                 fill
                 unoptimized
                 priority={i === 0}
@@ -77,7 +79,7 @@ export default function ProductGallery({ images, name }: { images: Img[]; name: 
           <>
             <button
               type="button"
-              aria-label="Предыдущее фото"
+              aria-label={m.gallery.prev}
               disabled={index === 0}
               onClick={() => go(index - 1)}
               className={`${arrow} left-3`}
@@ -88,7 +90,7 @@ export default function ProductGallery({ images, name }: { images: Img[]; name: 
             </button>
             <button
               type="button"
-              aria-label="Следующее фото"
+              aria-label={m.gallery.next}
               disabled={index === last}
               onClick={() => go(index + 1)}
               className={`${arrow} right-3`}
@@ -114,7 +116,7 @@ export default function ProductGallery({ images, name }: { images: Img[]; name: 
               <button
                 type="button"
                 onClick={() => go(i)}
-                aria-label={`Показать фото ${i + 1}`}
+                aria-label={m.gallery.showPhoto(i + 1)}
                 aria-current={i === index}
                 className={`relative block h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-surface focus-visible:outline-2 focus-visible:outline-accent ${
                   i === index ? "border-accent" : "border-line"

@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useI18n } from "@/components/I18nProvider";
 
 const ASSETS = {
   sm: { src: "/images/veltrix-emblem-sm.png", width: 192, height: 140 },
@@ -38,10 +41,11 @@ export default function Logo({
   textClassName?: string;
   priority?: boolean;
 }) {
+  const { m } = useI18n();
   return (
     <Link
       href="/"
-      aria-label="VELTRIX, на главную"
+      aria-label={m.common.homeLink}
       className="veltrix-logo-link inline-flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
     >
       <Emblem className={emblemClassName} priority={priority} />

@@ -4,7 +4,8 @@ import AddToCart from "@/components/AddToCart";
 import FavoriteButton from "@/components/FavoriteButton";
 import ProductGallery from "@/components/ProductGallery";
 import { ApiError, getProduct } from "@/lib/api";
-import { CONDITIONS, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
+import { getI18n } from "@/lib/i18n/server";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const abs = (u: string) => new URL(u, SITE).toString();
@@ -28,12 +29,13 @@ async function load(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props) {
+  const { m } = await getI18n();
   const { slug } = await params;
   const p = await load(slug);
-  const description = p.description.slice(0, 160) || `${p.name} в VELTRIX`;
+  const description = p.description.slice(0, 160) || m.meta.productFallback(p.name);
   const image = p.images[0]?.url;
   return {
-    title: `${p.name} — VELTRIX`,
+    title: m.meta.product(p.name),
     description,
     alternates: { canonical: `/product/${p.slug}` },
     openGraph: {
@@ -46,6 +48,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ProductPage({ params }: Props) {
+  const { locale, m } = await getI18n();
   const { slug } = await params;
   const product = await load(slug);
 
@@ -73,8 +76,8 @@ export default async function ProductPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
-      <nav aria-label="Хлебные крошки" className="mb-6 text-sm text-muted">
-        <Link href="/catalog" className="hover:text-fg">Каталог</Link>
+      <nav aria-label={m.product.breadcrumbs} className="mb-6 text-sm text-muted">
+        <Link href="/catalog" className="hover:text-fg">{m.nav.catalog}</Link>
         <span className="mx-2">/</span>
         <span>{product.category.name}</span>
       </nav>
@@ -90,20 +93,20 @@ export default async function ProductPage({ params }: Props) {
           </div>
           {product.description && <p className="mt-4 text-muted">{product.description}</p>}
 
-          <h2 className="mt-8 text-lg font-semibold">Варианты</h2>
+          <h2 className="mt-8 text-lg font-semibold">{m.product.variants}</h2>
           <ul className="mt-3 grid gap-3">
             {product.variants.map((v) => (
               <li key={v.id} className="rounded-xl border border-line bg-surface p-4">
                 <div className="flex items-baseline justify-between gap-4">
                   <span className="font-medium">{v.title || v.sku}</span>
-                  <span className="text-lg font-bold">{formatPrice(v.price)}</span>
+                  <span className="text-lg font-bold">{formatPrice(v.price, locale)}</span>
                 </div>
                 <p className="mt-1 text-sm text-muted">
-                  {CONDITIONS[v.condition] ?? v.condition}
-                  {v.warranty_months > 0 && ` · гарантия ${v.warranty_months} мес.`}
+                  {m.conditions[v.condition] ?? v.condition}
+                  {v.warranty_months > 0 && ` · ${m.product.warranty(v.warranty_months)}`}
                   {" · "}
                   <span className={v.stock > 0 ? "text-green-400" : ""}>
-                    {v.stock > 0 ? "В наличии" : "Нет в наличии"}
+                    {v.stock > 0 ? m.common.inStock : m.common.outOfStock}
                   </span>
                 </p>
                 <AddToCart variantId={v.id} stock={v.stock} />
@@ -113,7 +116,7 @@ export default async function ProductPage({ params }: Props) {
 
           {product.attributes.length > 0 && (
             <>
-              <h2 className="mt-8 text-lg font-semibold">Характеристики</h2>
+              <h2 className="mt-8 text-lg font-semibold">{m.product.characteristics}</h2>
               <dl className="mt-3 divide-y divide-line rounded-xl border border-line">
                 {product.attributes.map((a) => (
                   <div key={a.name} className="flex justify-between gap-4 px-4 py-3 text-sm">

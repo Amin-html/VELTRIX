@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useFavorites } from "@/components/FavoritesProvider";
+import { useI18n } from "@/components/I18nProvider";
 
 export default function FavoriteButton({ slug, className = "" }: { slug: string; className?: string }) {
   const router = useRouter();
+  const { m } = useI18n();
   const { slugs, toggle } = useFavorites();
   const active = slugs.has(slug);
 
@@ -17,7 +19,7 @@ export default function FavoriteButton({ slug, className = "" }: { slug: string;
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      aria-label={active ? "Убрать из избранного" : "Добавить в избранное"}
+      aria-label={active ? m.favorites.remove : m.favorites.add}
       className={`flex h-10 w-10 items-center justify-center rounded-full border border-line bg-bg/70 backdrop-blur transition-colors hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent ${className}`}
     >
       <svg

@@ -1,15 +1,15 @@
 import { ButtonLink } from "@/components/ui/Button";
+import { getI18n } from "@/lib/i18n/server";
 
-export const metadata = { title: "Страница не найдена — VELTRIX" };
-
-export default function NotFound() {
+export default async function NotFound() {
+  const { m } = await getI18n();
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
-      <h1 className="text-3xl font-bold">Страница не найдена</h1>
-      <p className="mt-3 text-muted">Ссылка могла устареть, а товар быть снят с продажи.</p>
+      <h1 className="text-3xl font-bold">{m.errors.notFoundTitle}</h1>
+      <p className="mt-3 text-muted">{m.errors.notFoundText}</p>
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-        <ButtonLink href="/">На главную</ButtonLink>
-        <ButtonLink href="/catalog" variant="secondary">В каталог</ButtonLink>
+        <ButtonLink href="/">{m.errors.home}</ButtonLink>
+        <ButtonLink href="/catalog" variant="secondary">{m.errors.toCatalog}</ButtonLink>
       </div>
     </div>
   );

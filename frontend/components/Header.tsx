@@ -3,39 +3,40 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { useCart } from "@/lib/cart";
+import { useI18n } from "@/components/I18nProvider";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Logo from "@/components/Logo";
-
-const NAV = [
-  { href: "/catalog", label: "Каталог" },
-  { href: "/repair", label: "Ремонт" },
-  { href: "/parts", label: "Запчасти" },
-  { href: "/trade-in", label: "Выкуп" },
-];
+import { useCart } from "@/lib/cart";
 
 export default function Header() {
+  const { m } = useI18n();
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
   const { count } = useCart();
 
-  // 1. Сначала объявляем базовые элементы меню
+  const NAV = [
+    { href: "/catalog", label: m.nav.catalog },
+    { href: "/repair", label: m.nav.repair },
+    { href: "/parts", label: m.nav.parts },
+    { href: "/trade-in", label: m.nav.tradeIn },
+  ];
+
   const navItems =
     user && (user.role === "master" || user.role === "admin")
-      ? [...NAV, { href: "/master", label: "Кабинет мастера" }]
+      ? [...NAV, { href: "/master", label: m.nav.master }]
       : NAV;
 
-  const cartLink = { href: "/cart", label: count > 0 ? `Корзина (${count})` : "Корзина" };
+  const cartLink = { href: "/cart", label: count > 0 ? m.nav.cartCount(count) : m.nav.cart };
 
   const authLink = loading
     ? null
     : user
-      ? { href: "/account", label: "Профиль" }
-      : { href: "/auth/login", label: "Войти" };
+      ? { href: "/account", label: m.nav.profile }
+      : { href: "/auth/login", label: m.nav.login };
 
-  // 2. Теперь собираем итоговый массив для мобильного меню с "Избранным"
   const mobileItems = [
     ...navItems,
-    { href: "/favorites", label: "Избранное" },
+    { href: "/favorites", label: m.nav.favorites },
     cartLink,
     ...(authLink ? [authLink] : []),
   ];
@@ -46,15 +47,14 @@ export default function Header() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const pill =
-    "h-10 items-center rounded-lg border border-line px-4 text-sm hover:bg-raised";
+  const pill = "h-10 items-center rounded-lg border border-line px-4 text-sm hover:bg-raised";
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Logo priority />
 
-        <nav aria-label="Основная навигация" className="hidden gap-8 md:flex">
+        <nav aria-label={m.nav.mainNav} className="hidden gap-8 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -66,10 +66,11 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="hidden gap-2 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitcher />
           <Link
             href="/favorites"
-            aria-label="Избранное"
+            aria-label={m.nav.favorites}
             className="flex h-10 w-10 items-center justify-center rounded-lg border border-line hover:bg-raised"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -91,7 +92,7 @@ export default function Header() {
           className="flex h-11 w-11 items-center justify-center rounded-lg border border-line md:hidden"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          aria-label={open ? "Закрыть меню" : "Открыть меню"}
+          aria-label={open ? m.nav.closeMenu : m.nav.openMenu}
           onClick={() => setOpen((v) => !v)}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -103,7 +104,7 @@ export default function Header() {
       {open && (
         <nav
           id="mobile-menu"
-          aria-label="Мобильная навигация"
+          aria-label={m.nav.mobileNav}
           className="border-t border-line bg-bg px-4 py-2 md:hidden"
         >
           {mobileItems.map((item) => (
@@ -116,6 +117,9 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
+          <div className="py-3">
+            <LanguageSwitcher className="w-fit" />
+          </div>
         </nav>
       )}
     </header>
