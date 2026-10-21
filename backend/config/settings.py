@@ -67,6 +67,8 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://localhost:3001"]
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3001")
 
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -4,10 +4,12 @@ import json
 import tempfile
 from decimal import Decimal
 from pathlib import Path
+from PIL import Image
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+from django.test import override_settings
 
 from apps.catalog.models import Product, ProductAttributeValue, ProductVariant
 
@@ -82,3 +84,16 @@ class ImportProductsTests(TestCase):
     def test_missing_file(self):
         with self.assertRaises(CommandError):
             call_command("import_products", "/no/such/file.json", stdout=io.StringIO())
+
+
+    def test_images_are_attached_in_order_and_not_duplicated(self):
+        with tempfile.TemporaryDirectory() as media, tempfile.TemporaryDirectory() as imgs:
+            for name in ("iphone-14.png", "iphone-14-2.png", "iphone-14-pro.png"):
+                Image.new("RGB", (10, 10), "blue").save(Path(imgs) / name)
+            with override_settings(MEDIA_ROOT=media):
+                self.run_import(DATA, "--images", imgs)
+                product = Product.objects.get(slug="iphone-14")
+                self.assertEqual(product.images.count(), 2)  # iphone-14-pro чужой
+                self.assertEqual([i.position for i in product.images.all()], [0, 1])
+                self.run_import(DATA, "--images", imgs)
+                self.assertEqual(product.images.count(), 2)  # без дублей

@@ -14,8 +14,10 @@ from .serializers import (
     RegisterSerializer, UserSerializer, AddressSerializer
 )
 from . import services
+from . import google_auth
 from .models import User, Address
 from rest_framework.exceptions import ValidationError
+from django.conf import settings
 
 BACKEND = "django.contrib.auth.backends.ModelBackend"
 
@@ -175,3 +177,20 @@ class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Address.objects.filter(user=self.request.user)
+    
+class GoogleLoginView(ThrottledView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if not settings.GOOGLE_CLIENT_ID:
+            return Response({"detail": "Вход через Google не настроен."}, status=503)
+        credential = request.data.get("credential")
+        if not isinstance(credential, str) or not (0 < len(credential) <= 4096):
+            return Response({"detail": "Не удалось войти через Google."}, status=400)
+        try:
+            info = google_auth.verify_google_credential(credential)
+            user = google_auth.get_or_create_google_user(info)
+        except google_auth.GoogleAuthError:
+            return Response({"detail": "Не удалось войти через Google."}, status=400)
+        login(request, user, backend=BACKEND)
+        return Response(UserSerializer(user).data)

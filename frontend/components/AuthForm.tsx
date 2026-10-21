@@ -7,6 +7,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
 import { Emblem } from "@/components/Logo";
+import GoogleSignIn from "@/components/GoogleSignIn";
 
 const input =
   "mt-1 h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
@@ -85,6 +86,8 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
         </Button>
       </form>
 
+      <GoogleSignIn />
+      
       <p className="mt-6 text-sm text-muted">
         {isRegister ? "Уже есть аккаунт? " : "Нет аккаунта? "}
         <Link href={isRegister ? "/auth/login" : "/auth/register"} className="text-accent hover:underline">

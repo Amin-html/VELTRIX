@@ -64,3 +64,17 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.label}: {self.address}"
+
+class SocialIdentity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="social_identities")
+    provider = models.CharField(max_length=20)
+    uid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["provider", "uid"], name="uniq_social_identity"),
+        ]
+
+    def __str__(self):
+        return f"{self.provider}:{self.uid}"

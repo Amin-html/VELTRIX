@@ -14,4 +14,5 @@ urlpatterns = [
     path("password-reset/confirm/", views.PasswordResetConfirmView.as_view()),
     path("addresses/", views.AddressListCreateView.as_view()),
     path("addresses/<int:pk>/", views.AddressDetailView.as_view()),
+    path("google/", views.GoogleLoginView.as_view()),
 ]

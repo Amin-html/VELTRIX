@@ -152,7 +152,7 @@ class Command(BaseCommand):
                 m = pattern.match(f.stem)
                 if m:
                     found.append((int(m.group(1) or 0), f))
-        for position, f in enumerate(sorted(found, key=lambda t: t[0])):
+        for position, (_, f) in enumerate(sorted(found, key=lambda t: t[0])):
             with f.open("rb") as fh:
                 image = ProductImage(product=product, alt=product.name, position=position)
                 image.image.save(f.name, File(fh), save=True)
