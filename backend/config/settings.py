@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 12,
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
     "DEFAULT_THROTTLE_RATES": {"auth": "10/min", "repair_create": "20/hour",
-                           "order_create": "30/hour", "tradein_create": "20/hour"},
+                           "order_create": "30/hour", "tradein_create": "20/hour", "upload": "20/hour"},
 }
 
 PASSWORD_RESET_TIMEOUT = 60 * 60  # ссылка действует 1 час

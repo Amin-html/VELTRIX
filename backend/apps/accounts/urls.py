@@ -15,4 +15,7 @@ urlpatterns = [
     path("addresses/", views.AddressListCreateView.as_view()),
     path("addresses/<int:pk>/", views.AddressDetailView.as_view()),
     path("google/", views.GoogleLoginView.as_view()),
+    path("me/avatar/", views.AvatarView.as_view()),
+    path("me/cover/", views.CoverView.as_view()),
+    path("profile-stats/", views.ProfileStatsView.as_view()),
 ]

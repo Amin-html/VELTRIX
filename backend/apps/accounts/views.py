@@ -18,6 +18,11 @@ from . import google_auth
 from .models import User, Address
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
+from django.db import IntegrityError
+from rest_framework.parsers import MultiPartParser
+
+from . import images
+from .stats import profile_stats
 
 BACKEND = "django.contrib.auth.backends.ModelBackend"
 
@@ -91,9 +96,11 @@ class MeView(APIView):
     def patch(self, request):
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        try:
+            serializer.save()
+        except IntegrityError:
+            return Response({"username": ["Это имя уже занято."]}, status=400)
         return Response(serializer.data)
-
 
 class VerifyEmailView(ThrottledView):
     permission_classes = [AllowAny]
@@ -194,3 +201,56 @@ class GoogleLoginView(ThrottledView):
             return Response({"detail": "Не удалось войти через Google."}, status=400)
         login(request, user, backend=BACKEND)
         return Response(UserSerializer(user).data)
+
+
+class ImageUploadView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "upload"
+    field = ""
+
+    def process(self, upload):
+        raise NotImplementedError
+
+    def post(self, request):
+        content = self.process(request.FILES.get("image"))
+        user = request.user
+        current = getattr(user, self.field)
+        old_name, storage = current.name, current.storage
+        current.save(content.name, content, save=False)
+        user.save(update_fields=[self.field])
+        if old_name:
+            storage.delete(old_name)
+        return Response(UserSerializer(user).data)
+
+    def delete(self, request):
+        user = request.user
+        current = getattr(user, self.field)
+        if current:
+            name, storage = current.name, current.storage
+            setattr(user, self.field, None)
+            user.save(update_fields=[self.field])
+            storage.delete(name)
+        return Response(UserSerializer(user).data)
+
+
+class AvatarView(ImageUploadView):
+    field = "avatar"
+
+    def process(self, upload):
+        return images.process_avatar(upload)
+
+
+class CoverView(ImageUploadView):
+    field = "cover"
+
+    def process(self, upload):
+        return images.process_cover(upload)
+
+
+class ProfileStatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response(profile_stats(request.user))

@@ -5,6 +5,12 @@ export type User = {
   phone: string;
   role: "customer" | "master" | "admin";
   email_verified: boolean;
+  username: string | null;
+  bio: string;
+  city: string;
+  avatar_url: string | null;
+  cover_url: string | null;
+  date_joined: string;
 };
 
 function csrfToken(): string {
@@ -19,7 +25,10 @@ export async function apiFetch(path: string, init: RequestInit = {}) {
     if (!csrfToken()) await fetch("/api/v1/auth/csrf/", { credentials: "same-origin" });
     headers.set("X-CSRFToken", csrfToken());
   }
-  if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  // JSON-заголовок только для строки: у FormData браузер сам ставит multipart с границей
+  if (typeof init.body === "string" && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
   return fetch(`/api/v1${path}`, { ...init, headers, credentials: "same-origin" });
 }
 
