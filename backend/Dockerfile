@@ -19,7 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
+# === ДОБАВЬТЕ ЭТУ СТРОКУ СЮДА ===
+RUN python manage.py collectstatic --no-input
+
 EXPOSE 8000
 
-# === ДОБАВЬТЕ ЭТУ СТРОКУ СЮДА ===
-CMD python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000
+CMD python manage.py migrate && python manage.py createsuperuser --noinput || true && gunicorn config.wsgi:application --bind 0.0.0.0:8000
