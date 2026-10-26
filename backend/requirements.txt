@@ -5,6 +5,6 @@ django-cors-headers>=4.0.0
 Pillow
 google-auth
 requests
-dj-database-url>=2.0.0
-gunicorn>=21.2.0
-whitenoise>=6.6.0
+gunicorn
+whitenoise
+dj-database-url
