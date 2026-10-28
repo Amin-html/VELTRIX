@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { apiFetch } from "@/lib/auth-client";
 
 export default function VerifyEmail({ token }: { token?: string }) {
   const { refresh } = useAuth();
+  const { m } = useI18n();
+  const a = m.auth;
   const [state, setState] = useState<"loading" | "ok" | "error">(token ? "loading" : "error");
 
   useEffect(() => {
@@ -32,22 +35,18 @@ export default function VerifyEmail({ token }: { token?: string }) {
 
   return (
     <div className="mx-auto max-w-md px-4 py-20 text-center sm:px-6">
-      {state === "loading" && <p className="text-muted">Подтверждаем email…</p>}
+      {state === "loading" && <p className="text-muted">{a.verifying}</p>}
       {state === "ok" && (
         <>
-          <h1 className="text-2xl font-bold">Email подтверждён</h1>
-          <Link href="/account" className="mt-6 inline-block text-accent hover:underline">
-            Перейти в профиль
-          </Link>
+          <h1 className="text-2xl font-bold">{a.verified}</h1>
+          <Link href="/account" className="mt-6 inline-block text-accent hover:underline">{a.toProfile}</Link>
         </>
       )}
       {state === "error" && (
         <>
-          <h1 className="text-2xl font-bold">Ссылка недействительна</h1>
-          <p className="mt-2 text-muted">Она могла устареть. Запросите новое письмо в профиле.</p>
-          <Link href="/account" className="mt-6 inline-block text-accent hover:underline">
-            Перейти в профиль
-          </Link>
+          <h1 className="text-2xl font-bold">{a.linkInvalid}</h1>
+          <p className="mt-2 text-muted">{a.verifyInvalidHint}</p>
+          <Link href="/account" className="mt-6 inline-block text-accent hover:underline">{a.toProfile}</Link>
         </>
       )}
     </div>

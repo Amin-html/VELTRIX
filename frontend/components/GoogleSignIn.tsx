@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -23,6 +24,7 @@ declare global {
 export default function GoogleSignIn() {
   const router = useRouter();
   const { refresh } = useAuth();
+  const { m } = useI18n();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
@@ -41,12 +43,13 @@ export default function GoogleSignIn() {
           router.push("/account");
           return;
         }
-        setError(Object.values(await errorMessages(res))[0]?.[0] ?? "Не удалось войти через Google.");
+        const errs = await errorMessages(res, m.net);
+        setError(res.status === 400 ? m.auth.googleFailed : (errs.detail?.[0] ?? m.auth.googleFailed));
       } catch {
-        setError("Нет соединения с сервером. Попробуйте ещё раз.");
+        setError(m.net.offline);
       }
     },
-    [refresh, router],
+    [refresh, router, m],
   );
 
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function GoogleSignIn() {
     <div className="mt-6">
       <div className="flex items-center gap-3 text-xs text-muted">
         <span className="h-px flex-1 bg-line" />
-        или
+        {m.auth.or}
         <span className="h-px flex-1 bg-line" />
       </div>
       <div ref={buttonRef} className="mt-4 flex min-h-11 justify-center" />

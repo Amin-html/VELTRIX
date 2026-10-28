@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import GoogleSignIn from "@/components/GoogleSignIn";
+import { useI18n } from "@/components/I18nProvider";
+import { Emblem } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { apiFetch, errorMessages } from "@/lib/auth-client";
-import { Emblem } from "@/components/Logo";
-import GoogleSignIn from "@/components/GoogleSignIn";
 
 const input =
   "mt-1 h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg focus-visible:outline-2 focus-visible:outline-accent";
@@ -15,6 +16,8 @@ const input =
 export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
   const { refresh } = useAuth();
+  const { m } = useI18n();
+  const a = m.auth;
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [pending, setPending] = useState(false);
   const isRegister = mode === "register";
@@ -31,9 +34,13 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
         router.push("/account");
         return;
       }
-      setErrors(await errorMessages(res));
+      const errs = await errorMessages(res, m.net);
+      if (res.status === 400 && errs.detail) {
+        errs.detail = [isRegister ? a.registerFailed : a.invalidCredentials];
+      }
+      setErrors(errs);
     } catch {
-      setErrors({ detail: ["Нет соединения с сервером. Попробуйте ещё раз."] });
+      setErrors({ detail: [m.net.offline] });
     } finally {
       setPending(false);
     }
@@ -45,23 +52,23 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   return (
     <div className="mx-auto max-w-md px-4 py-16 sm:px-6">
       <Emblem variant="lg" className="mx-auto mb-6 h-16 w-auto" />
-      <h1 className="text-3xl font-bold">{isRegister ? "Регистрация" : "Вход"}</h1>
+      <h1 className="text-3xl font-bold">{isRegister ? a.register : a.login}</h1>
 
       <form onSubmit={onSubmit} className="mt-8 grid gap-4" noValidate>
         {isRegister && (
           <label className="text-sm text-muted">
-            Имя
+            {a.name}
             <input name="first_name" autoComplete="given-name" className={input} />
             {fieldError("first_name")}
           </label>
         )}
         <label className="text-sm text-muted">
-          Email
+          {a.email}
           <input name="email" type="email" required autoComplete="email" className={input} />
           {fieldError("email")}
         </label>
         <label className="text-sm text-muted">
-          Пароль
+          {a.password}
           <input
             name="password"
             type="password"
@@ -69,29 +76,29 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             autoComplete={isRegister ? "new-password" : "current-password"}
             className={input}
           />
-          {!isRegister && (
-          <Link href="/auth/forgot" className="-mt-2 text-sm text-accent hover:underline">
-            Забыли пароль?
-          </Link>
-        )}
           {fieldError("password")}
         </label>
+        {!isRegister && (
+          <Link href="/auth/forgot" className="-mt-2 text-sm text-accent hover:underline">
+            {a.forgot}
+          </Link>
+        )}
 
         {errors.detail && (
           <p role="alert" className="text-sm text-red-400">{errors.detail[0]}</p>
         )}
 
         <Button type="submit" disabled={pending}>
-          {pending ? "Подождите…" : isRegister ? "Создать аккаунт" : "Войти"}
+          {pending ? a.wait : isRegister ? a.submitRegister : a.submitLogin}
         </Button>
       </form>
 
       <GoogleSignIn />
-      
+
       <p className="mt-6 text-sm text-muted">
-        {isRegister ? "Уже есть аккаунт? " : "Нет аккаунта? "}
+        {isRegister ? a.haveAccount : a.noAccount}{" "}
         <Link href={isRegister ? "/auth/login" : "/auth/register"} className="text-accent hover:underline">
-          {isRegister ? "Войти" : "Зарегистрироваться"}
+          {isRegister ? a.toLogin : a.toRegister}
         </Link>
       </p>
     </div>

@@ -32,8 +32,13 @@ export async function apiFetch(path: string, init: RequestInit = {}) {
   return fetch(`/api/v1${path}`, { ...init, headers, credentials: "same-origin" });
 }
 
-export async function errorMessages(res: Response): Promise<Record<string, string[]>> {
-  if (res.status === 429) return { detail: ["Слишком много попыток. Подождите минуту."] };
+export async function errorMessages(
+  res: Response,
+  texts?: { tooMany: string; generic: string },
+): Promise<Record<string, string[]>> {
+  if (res.status === 429) {
+    return { detail: [texts?.tooMany ?? "Слишком много попыток. Подождите минуту."] };
+  }
   try {
     const data = await res.json();
     const out: Record<string, string[]> = {};
@@ -42,6 +47,6 @@ export async function errorMessages(res: Response): Promise<Record<string, strin
     }
     return out;
   } catch {
-    return { detail: ["Что-то пошло не так. Попробуйте ещё раз."] };
+    return { detail: [texts?.generic ?? "Что-то пошло не так. Попробуйте ещё раз."] };
   }
 }

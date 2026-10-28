@@ -110,7 +110,7 @@ export function OrdersPanel() {
             title={m.profile.order(shortId(o.id))}
             sub={fmt(o.created_at, locale)}
             right={formatPrice(o.total, locale)}
-            status={o.status_display}
+            status={m.orders.status[o.status] ?? o.status_display}
           />
         </li>
       ))}
